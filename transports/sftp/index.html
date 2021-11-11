@@ -16,6 +16,7 @@
       <option value="delete">Delete File</option>
       <option value="mkdir">Make Directory</option>
       <option value="rmdir">Remove Directory</option>
+      <option value="rename">Rename File</option>
     </select>
   </div>
   <div class="form-row input-workdir-row">
@@ -25,6 +26,10 @@
   <div class="form-row input-filename-row hidden">
     <label for="node-input-filename" style="width: 120px;"  ><i class="fa fa-file"></i> Filename</label>
     <input type="text" id="node-input-filename" style="width: calc(100% - 170px);" placeholder="Filename">
+  </div>
+  <div class="form-row input-tofilename-row hidden">
+    <label for="node-input-tofilename" style="width: 120px;"  ><i class="fa fa-file"></i> To Filename</label>
+    <input type="text" id="node-input-tofilename" style="width: calc(100% - 170px);" placeholder="To filename">
   </div>
   <div class="form-row input-localFilename-row hidden">
     <label for="node-input-localFilename" style="width: 120px;"  ><i class="fa fa-file"></i> Local Filename</label>
@@ -47,6 +52,7 @@
    <p><b>Delete</b>: Deletes a file from the SFTP directory. File name is required.</p>
    <p><b>Make Directory</b>: Creates a directory on the SFTP server by the working directory.</p>
    <p><b>Remove Directory</b>: Removes a directory and all sub directories on the SFTP server by the working directory.</p>
+   <p><b>Rename File</b>: Rename a file on the SFTP directory. <code>msg.payload.tofilename</code> should contain new file name.</p>
 </script>
 
 <script type="text/javascript">
@@ -58,6 +64,7 @@
       sftp: { type: 'sftp', required: true },
       operation: { value: 'list', required: true },
       filename: { value: '' },
+      tofilename: { value: '' },
       localFilename: { value: '' },
       workdir: { value: '' }
     },
@@ -74,6 +81,7 @@
       let filename = $(".input-filename-row");
       let localFilename = $(".input-localFilename-row");
       let workdir = $(".input-workdir-row");
+	  let tofilename = $(".input-tofilename-row");
       $("#node-input-operation").change(function () {
         let id = $("#node-input-operation option:selected").val();
 
@@ -82,27 +90,38 @@
             workdir.show();
             filename.hide();
             localFilename.hide();
+			tofilename.hide();
             break;
           case 'get':
           case 'put':
             filename.show();
             workdir.show();
             localFilename.hide();
+			tofilename.hide();
             break;
           case 'delete':
             filename.show();
             workdir.show();
             localFilename.hide();
+			tofilename.hide();
             break;
           case 'mkdir':
           case 'rmdir':
             workdir.show();
             filename.hide();
             localFilename.hide();
+			tofilename.hide();
+            break;
+          case 'rename':
+            filename.show();
+            workdir.show();
+			tofilename.show();
+            localFilename.hide();
             break;
           default:
             filename.show();
             localFilename.hide();
+			tofilename.hide();
             break;
         }
       });
