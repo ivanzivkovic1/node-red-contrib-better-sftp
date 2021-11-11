@@ -57,6 +57,7 @@ module.exports = function (RED) {
         this.sftp = n.sftp;
         this.operation = n.operation;
         this.filename = n.filename;
+        this.tofilename = n.tofilename;
         this.localFilename = n.localFilename;
         this.workdir = n.workdir;
         this.sftpConfig = RED.nodes.getNode(this.sftp);
@@ -139,7 +140,10 @@ module.exports = function (RED) {
 
                         switch (node.operation) {
                             case 'list':
-                                let fileListing = await sftp.list(node.workdir);
+								let listPath = node.workdir;
+								if (msg.payload.listpath) listPath = msg.payload.listpath;
+
+                                let fileListing = await sftp.list(listPath);
                                 msg.payload = fileListing;
                                 node.send(msg);
                                 break;
@@ -177,6 +181,15 @@ module.exports = function (RED) {
                                 let rmDirName = (msg.payload) ? msg.payload : node.workdir;
                                 let rmdir = await sftp.rmdir(rmDirName, false);
                                 msg.payload = rmdir;
+                                node.send(msg);
+                                break;
+							case 'rename':
+								let fromFtpFileName = path.join(node.workdir, node.filename);
+								if (msg.payload) fromFtpFileName = msg.payload;
+								let toFtpFileName = path.join(node.workdir, node.tofilename);
+								if (msg.payload.tofilename) toFtpFileName = msg.payload.tofilename;
+								let rename = await sftp.rename(fromFtpFileName,toFtpFileName);
+								msg.payload = rename;
                                 node.send(msg);
                                 break;
                             default:
