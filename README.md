@@ -30,6 +30,10 @@ File contents will be uploaded to the SFTP server in the working directory speci
 
 **Remove Directory** - Set `msg.payload` to the name of the directory to remove. If blank working directory will be used.
 
+**Rename file** - Set `msg.payload.filename` to the desired name of remote file.
+Set `msh.payload.tofilename` to the desired new name of the remote file.
+If `msg.payload.filename` is not specified filename in node config will be used. 
+
 Configuration
 -------
 
