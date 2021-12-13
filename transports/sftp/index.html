@@ -14,6 +14,7 @@
       <option value="get">Get</option>
       <option value="put">Put</option>
       <option value="delete">Delete File</option>
+      <option value="rename">Rename File</option>
       <option value="mkdir">Make Directory</option>
       <option value="rmdir">Remove Directory</option>
     </select>
@@ -25,6 +26,10 @@
   <div class="form-row input-filename-row hidden">
     <label for="node-input-filename" style="width: 120px;"  ><i class="fa fa-file"></i> Filename</label>
     <input type="text" id="node-input-filename" style="width: calc(100% - 170px);" placeholder="Filename">
+  </div>
+  <div class="form-row input-newfilename-row hidden">
+    <label for="node-input-newfilename" style="width: 120px;"  ><i class="fa fa-file"></i> New filename</label>
+    <input type="text" id="node-input-newfilename" style="width: calc(100% - 170px);" placeholder="Newfilename">
   </div>
   <div class="form-row input-localFilename-row hidden">
     <label for="node-input-localFilename" style="width: 120px;"  ><i class="fa fa-file"></i> Local Filename</label>
@@ -45,6 +50,7 @@
    <p><b>Get</b>: Gets a file from SFTP server and returns a buffer. Use file-in node to write buffer to file</p>
    <p><b>Put</b>: Writes a file to SFTP server in specified working directory. <code>msg.payload</code> can contain a location to the file, buffer stream, or single buffer object.</p>
    <p><b>Delete</b>: Deletes a file from the SFTP directory. File name is required.</p>
+   <p><b>Rename</b>: Rename a file from the SFTP directory. File name is required.</p>
    <p><b>Make Directory</b>: Creates a directory on the SFTP server by the working directory.</p>
    <p><b>Remove Directory</b>: Removes a directory and all sub directories on the SFTP server by the working directory.</p>
 </script>
@@ -58,6 +64,7 @@
       sftp: { type: 'sftp', required: true },
       operation: { value: 'list', required: true },
       filename: { value: '' },
+      newfilename: { value: '' },
       localFilename: { value: '' },
       workdir: { value: '' }
     },
@@ -72,6 +79,7 @@
     },
     oneditprepare: function () {
       let filename = $(".input-filename-row");
+      let newfilename = $(".input-newfilename-row");
       let localFilename = $(".input-localFilename-row");
       let workdir = $(".input-workdir-row");
       $("#node-input-operation").change(function () {
@@ -81,16 +89,25 @@
           case 'list':
             workdir.show();
             filename.hide();
+            newfilename.hide();
             localFilename.hide();
             break;
           case 'get':
           case 'put':
             filename.show();
+            newfilename.hide();
             workdir.show();
             localFilename.hide();
             break;
           case 'delete':
             filename.show();
+            newfilename.hide();
+            workdir.show();
+            localFilename.hide();
+            break;
+          case 'rename':
+            filename.show();
+            newfilename.show();
             workdir.show();
             localFilename.hide();
             break;
@@ -98,10 +115,12 @@
           case 'rmdir':
             workdir.show();
             filename.hide();
+            newfilename.hide();
             localFilename.hide();
             break;
           default:
             filename.show();
+            newfilename.hide();
             localFilename.hide();
             break;
         }
