@@ -167,6 +167,17 @@ module.exports = function (RED) {
                                 msg.payload = del;
                                 node.send(msg);
                                 break;
+                            case 'rename':
+                                let originalFtpFileName = path.join(node.workdir, node.filename);
+                                if (msg.payload.filename) originalFtpFileName = path.join(node.workdir, msg.payload.filename);
+                                let newFtpFileName = path.join(node.workdir, node.newfilename);
+                                if (msg.payload.filename) newFtpFileName = path.join(node.workdir, msg.payload.newfilename);
+
+                                let rename = await sftp.rename(originalFtpFileName, newFtpFileName);
+
+                                msg.payload = rename;
+                                node.send(msg);
+                                break;
                             case 'mkdir':
                                 let mkDirName = (msg.payload) ? msg.payload : node.workdir;
                                 let mkdir = await sftp.mkdir(mkDirName, false);
